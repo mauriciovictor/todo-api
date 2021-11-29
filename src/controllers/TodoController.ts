@@ -1,55 +1,60 @@
 import { Request, Response } from "express";
 import { Todo } from "../utils/interfaces/Todo";
-import { Todos, setTodoData } from "../database/Todo";
+import { getManager } from "typeorm";
+
+import { Todos } from "../models/Todo";
 
 class TodoController {
-  index(_: Request, res: Response) {
-    res.json(Todos).status(200);
+  async index(_: Request, res: Response) {
+    const todos = getManager().getRepository(Todos);
+    const data = await todos.find();
+
+    res.json(data).status(200);
   }
 
-  show(req: Request, res: Response) {
+  async show(req: Request, res: Response) {
     const { id } = req.params;
-    const todo = Todos.filter((td) => td.id === id);
+    const todos = getManager().getRepository(Todos);
+
+    const todo = await todos.findOne({
+      where: {
+        id,
+      },
+    });
+
     res.json(todo).status(200);
   }
 
-  store(req: Request, res: Response) {
-    const { id, isComplete, nome } = req.body as Todo;
+  async store(req: Request, res: Response) {
+    const { complete, name } = req.body as Todo;
+    const todos = getManager().getRepository(Todos);
+    const todo = await todos.save({ name, complete });
 
-    const data = {
-      id,
-      nome,
-      isComplete,
-    };
-
-    Todos.push(data);
-
-    res.json(data).status(201);
+    res.json(todo).status(201);
   }
 
-  update(req: Request, res: Response) {
+  async update(req: Request, res: Response) {
     const { id } = req.params;
-    const { nome, isComplete } = req.body as Todo;
-    const newTodo = [...Todos];
+    const { name, complete } = req.body as Todo;
 
-    const findIndexTodo = Todos.findIndex((todo) => id === todo.id);
+    const todos = getManager().getRepository(Todos);
 
-    console.log(id);
+    await todos.update({ id: Number(id) }, { name, complete });
 
-    newTodo[findIndexTodo].nome = nome;
-    newTodo[findIndexTodo].isComplete = isComplete;
+    const todo = await todos.findOne(id);
 
-    setTodoData(newTodo);
-
-    res.json(Todos[findIndexTodo]).status(200);
+    res.json(todo).status(200);
   }
 
-  destroy(req: Request, res: Response) {
+  async destroy(req: Request, res: Response) {
     const { id } = req.params;
 
-    let newTodo = Todos.filter((todo) => todo.id !== id);
+    const todos = getManager().getRepository(Todos);
 
-    setTodoData(newTodo);
+    await todos.delete({
+      id: Number(id),
+    });
+
     res.json({ message: "Deletado com sucesso" }).status(200);
   }
 }
