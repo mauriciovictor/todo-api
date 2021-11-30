@@ -1,15 +1,61 @@
 import { Request, Response } from "express";
 import { Todo } from "../utils/interfaces/Todo";
-import { getManager } from "typeorm";
+import { getManager, Like } from "typeorm";
 
 import { Todos } from "../models/Todo";
 
-class TodoController {
-  async index(_: Request, res: Response) {
-    const todos = getManager().getRepository(Todos);
-    const data = await todos.find();
+interface Pagination {
+  skip: number;
+  take: number;
+}
 
-    res.json(data).status(200);
+interface Condicions {
+  [key: string]: string;
+}
+
+class TodoController {
+  async index(req: Request, res: Response) {
+    const todos = getManager().getRepository(Todos);
+
+    const { page, limit, id, complete, name } = req.query;
+
+    const condicions = {
+      where: {
+        complete,
+        name: name ? Like(`%${name}%`) : "",
+        id,
+      } as Condicions,
+    };
+
+    for (var condicion in condicions.where) {
+      if (!condicions.where[`${condicion}`])
+        delete condicions.where[`${condicion}`];
+    }
+
+    const total_todos = await todos.count({
+      ...condicions,
+    });
+
+    const pagination = {
+      skip: (Number(page) - 1) * Number(limit),
+      take: Number(limit),
+    } as Pagination;
+
+    const data = await todos.find({
+      ...pagination,
+      ...condicions,
+    });
+
+    const response = {
+      todos: data,
+      pagination: {
+        pages: Math.ceil(total_todos / Number(limit)),
+        limit: Number(limit),
+        current_page: Number(page),
+      },
+    };
+
+    res.json(response).status(200);
   }
 
   async show(req: Request, res: Response) {

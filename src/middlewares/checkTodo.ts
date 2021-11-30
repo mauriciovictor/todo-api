@@ -9,7 +9,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 
   const todo = await todos.findOne(id);
 
-  if (!todo) return res.json({ message: "Todo not exist" });
+  if (!todo) return res.json({ message: "Todo not exist" }).status(404);
 
   next();
 };
