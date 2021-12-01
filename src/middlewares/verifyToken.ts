@@ -16,20 +16,20 @@ export default async (req: Request, res: Response, next: NextFunction) => {
   try {
     const verifyToken = verify(token, process.env.JWT_SECRET!);
 
-    req.id = Number(verifyToken.sub);
-
     const userModel = getManager().getRepository(User);
 
     const user = await userModel.findOne({
       where: {
-        id: req.id,
+        id: Number(verifyToken.sub),
       },
     });
 
     if (!user) return res.status(404).json({ message: "user not exits" });
 
+    req.id = user.id;
+
     return next();
   } catch (error) {
-    return res.status(401).json({ message: "token invalid!" });
+    return res.status(401).json({ message: "token invalid!", error });
   }
 };

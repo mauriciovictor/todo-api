@@ -9,6 +9,8 @@ import verifyToken from "../middlewares/verifyToken";
 
 const routes = Router();
 
+routes.post("/authenticate", authController.auth);
+
 routes.get("/todos", verifyToken, todoController.index);
 routes.get("/todos/:id", verifyToken, checkTodo, todoController.show);
 routes.post("/todos", verifyToken, todoController.store);
@@ -20,9 +22,5 @@ routes.get("/user", verifyToken, userController.show);
 routes.post("/users", userController.store);
 routes.put("/users", verifyToken, userController.update);
 routes.delete("/users/:id", verifyToken, userController.destroy);
-
-routes.post("/authenticate", authController.auth);
-
-routes.get("/test", verifyToken, (req, res) => {});
 
 export { routes };
