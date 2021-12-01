@@ -17,7 +17,7 @@ class AuthController {
     };
 
     const errors = await ValidationSchema(SchemaUserAuth, data);
-    if (errors[0]) return res.send({ errors });
+    if (errors[0]) return res.send({ errors }).status(401);
 
     const userModel = getManager().getRepository(User);
 
@@ -28,19 +28,19 @@ class AuthController {
     });
 
     if (!userExist)
-      return res.send({ message: "email or password incorrect!" }).status(401);
+      return res.status(401).json({ message: "email or password incorrect!" });
 
     const passwordMatch = await compare(password, userExist.password);
 
     if (!passwordMatch)
-      return res.send({ message: "email or password incorrect!" }).status(401);
+      return res.status(401).json({ message: "email or password incorrect!" });
 
-    const token = sign({}, process.env.JWT_SECRET, {
+    const token = sign({}, process.env.JWT_SECRET!, {
       expiresIn: "30m",
       subject: String(userExist.id),
     });
 
-    res.send({ token });
+    res.json({ token });
   }
 }
 
