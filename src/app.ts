@@ -1,6 +1,7 @@
 import express from "express";
-import "./database/config";
 import { routes } from "./routes/public.routes";
+import "./database/config";
+require("dotenv").config();
 
 const app = express();
 

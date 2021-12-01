@@ -4,6 +4,7 @@ import checkTodo from "../middlewares/checkTodo";
 
 import todoController from "../controllers/TodoController";
 import userController from "../controllers/UserController";
+import authController from "../controllers/AuthController";
 
 const routes = Router();
 
@@ -18,5 +19,7 @@ routes.post("/users", userController.store);
 routes.get("/users/:id", userController.show);
 routes.put("/users/:id", userController.update);
 routes.delete("/users/:id", userController.destroy);
+
+routes.post("/authenticate", authController.auth);
 
 export { routes };
