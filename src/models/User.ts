@@ -5,7 +5,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from "typeorm";
+
+import { Todos } from "./Todo";
 
 @Entity("users")
 export class User {
@@ -20,6 +23,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToMany((type) => Todos, (todos) => todos.user)
+  todos: Todos[];
 
   @CreateDateColumn()
   created_at: Date;

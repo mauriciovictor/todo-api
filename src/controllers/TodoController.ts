@@ -3,6 +3,7 @@ import { Todo } from "../utils/interfaces/Todo";
 import { getManager, Like } from "typeorm";
 
 import { Todos } from "../models/Todo";
+import { User } from "../models/User";
 
 interface Pagination {
   skip: number;
@@ -33,7 +34,10 @@ class TodoController {
     }
 
     const total_todos = await todos.count({
-      ...condicions,
+      where: {
+        ...condicions.where,
+        user_id: req.id,
+      },
     });
 
     const pagination = {
@@ -43,7 +47,10 @@ class TodoController {
 
     const data = await todos.find({
       ...pagination,
-      ...condicions,
+      where: {
+        ...condicions.where,
+        user_id: req.id,
+      },
     });
 
     const response = {
@@ -74,8 +81,7 @@ class TodoController {
   async store(req: Request, res: Response) {
     const { complete, name } = req.body as Todo;
     const todos = getManager().getRepository(Todos);
-    const todo = await todos.save({ name, complete });
-
+    const todo = await todos.save({ name, complete, user_id: req.id });
     res.json(todo).status(201);
   }
 

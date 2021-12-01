@@ -28,11 +28,10 @@ class UserController {
   }
 
   async show(req: Request, res: Response) {
-    const { id } = req.params;
     const userModel = getManager().getRepository(User);
     const user = await userModel.findOne({
       where: {
-        id: Number(id),
+        id: req.id,
       },
     });
 
@@ -40,8 +39,6 @@ class UserController {
   }
 
   async update(req: Request, res: Response) {
-    const { id } = req.params;
-
     const { name, email, password } = req.body as UserData;
 
     let passwordHash = "";
@@ -63,11 +60,13 @@ class UserController {
         if (!data[field]) delete data[field];
       }
 
-      await userModel.update({ id: Number(id) }, data);
+      const id = req.id;
+
+      await userModel.update({ id }, data);
 
       const user = await userModel.findOne({
         where: {
-          id: Number(id),
+          id,
         },
       });
 
