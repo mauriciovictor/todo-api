@@ -6,7 +6,7 @@ import { SchemaUserCreate } from "../schemas/User/Create";
 import { SchemaUserUpdate } from "../schemas/User/Update";
 
 import { ValidationSchema } from "../helpers/SchemaValidation";
-import { User } from "../models/User";
+import { User } from "../models";
 
 interface UserData {
   name: string;

@@ -2,10 +2,10 @@ import { Request, Response } from "express";
 import { getManager } from "typeorm";
 import day from "dayjs";
 
-import { RefreshToken } from "../models/RefreshToken";
-import RefreshTokenProvider from "../providers/RefreshTokenProvider";
+import { RefreshToken } from "../models";
+import { RefreshTokenProvider, TokenProvider } from "../providers";
+
 import dayjs from "dayjs";
-import TokenProvider from "../providers/TokenProvider";
 
 class RefreshTokenController {
   async store(req: Request, res: Response) {

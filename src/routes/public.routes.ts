@@ -1,12 +1,13 @@
 import { Router } from "express";
 
-import checkTodo from "../middlewares/checkTodo";
+import { checkTodo, verifyToken } from "../middlewares";
 
-import todoController from "../controllers/TodoController";
-import userController from "../controllers/UserController";
-import authController from "../controllers/AuthController";
-import verifyToken from "../middlewares/verifyToken";
-import refreshTokenController from "../controllers/RefreshTokenController";
+import {
+  authController,
+  refreshTokenController,
+  todoController,
+  userController,
+} from "../controllers";
 
 const routes = Router();
 

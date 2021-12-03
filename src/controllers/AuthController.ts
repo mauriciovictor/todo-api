@@ -1,13 +1,12 @@
 import { Request, Response } from "express";
 import { getManager } from "typeorm";
 import { compare } from "bcrypt";
-import { sign } from "jsonwebtoken";
+
+import { User } from "../models";
+import { RefreshTokenProvider, TokenProvider } from "../providers";
 
 import { ValidationSchema } from "../helpers/SchemaValidation";
-import { User } from "../models/User";
 import { SchemaUserAuth } from "../schemas/User/Auth";
-import TokenProvider from "../providers/TokenProvider";
-import RefreshTokenProvider from "../providers/RefreshTokenProvider";
 
 class AuthController {
   async auth(req: Request, res: Response) {

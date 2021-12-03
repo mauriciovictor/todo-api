@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
-import { Todo } from "../utils/interfaces/Todo";
 import { getManager, Like } from "typeorm";
 
-import { Todos } from "../models/Todo";
-import { User } from "../models/User";
+import { Todos } from "../models";
+import { Todo } from "../utils/interfaces/Todo";
 
 interface Pagination {
   skip: number;
