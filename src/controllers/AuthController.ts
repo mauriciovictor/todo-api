@@ -6,6 +6,8 @@ import { sign } from "jsonwebtoken";
 import { ValidationSchema } from "../helpers/SchemaValidation";
 import { User } from "../models/User";
 import { SchemaUserAuth } from "../schemas/User/Auth";
+import TokenProvider from "../providers/TokenProvider";
+import RefreshTokenProvider from "../providers/RefreshTokenProvider";
 
 class AuthController {
   async auth(req: Request, res: Response) {
@@ -35,12 +37,17 @@ class AuthController {
     if (!passwordMatch)
       return res.status(401).json({ message: "email or password incorrect!" });
 
-    const token = sign({}, process.env.JWT_SECRET!, {
-      expiresIn: "30m",
-      subject: String(userExist.id),
-    });
+    const tokenProvider = new TokenProvider(userExist.id);
+    const token = await tokenProvider.generate();
 
-    res.json({ token });
+    const refreshTokenProvider = new RefreshTokenProvider(userExist.id);
+    await refreshTokenProvider.delete();
+
+    const refresh_token = await refreshTokenProvider.generate();
+
+    console.log(refresh_token);
+
+    res.json({ token, refresh_token });
   }
 }
 

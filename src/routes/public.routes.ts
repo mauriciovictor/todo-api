@@ -6,10 +6,12 @@ import todoController from "../controllers/TodoController";
 import userController from "../controllers/UserController";
 import authController from "../controllers/AuthController";
 import verifyToken from "../middlewares/verifyToken";
+import refreshTokenController from "../controllers/RefreshTokenController";
 
 const routes = Router();
 
 routes.post("/authenticate", authController.auth);
+routes.post("/refresh-token", verifyToken, refreshTokenController.store);
 
 routes.get("/todos", verifyToken, todoController.index);
 routes.get("/todos/:id", verifyToken, checkTodo, todoController.show);
